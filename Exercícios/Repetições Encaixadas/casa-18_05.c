@@ -19,8 +19,14 @@ int main() {
         assim: i = n^2 - n + 1
     */
     first_odd = n * n - n + 1;
-    printf("%d ", first_odd);
-    for (int i = 1; i < n; i++) {
+    if (n == 0){
+        printf("0");
+    }
+    else {
+            printf("%d ", first_odd);
+    }
+
+    for (int i = 1; i < n && n > 0; i++) {
         printf("+ %d ", first_odd + 2 * i);
     }
 
