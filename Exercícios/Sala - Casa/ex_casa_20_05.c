@@ -22,7 +22,7 @@ int main() {
 
     for (int i = 0; i <= k; i++) {
         for (int j = 0; j <= i; j++) {
-            printf("%d   ", fat(i)/(fat(j) * fat(i-j)));
+            printf("%4d ", fat(i)/(fat(j) * fat(i-j)));
         }
         printf("\n");
     }
