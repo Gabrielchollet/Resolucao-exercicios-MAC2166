@@ -14,6 +14,8 @@ int main() {
 void SegundaParte( int n, int d ) {
     int ind_a, ind_b, ind_i, s_a, s_b, s_i, m, num_seq = 0;
 
+    printf("Listagem das sequencias de S( 4 , 3 , 2 ) (com repeticao):\n");
+
     for (ind_a = 1; ind_a <= 3; ind_a++) {
         for (ind_b = 1; ind_b <= 3; ind_b++) {
             if (ind_a != ind_b) {
