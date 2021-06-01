@@ -1,4 +1,5 @@
 /* Jogo do Bixo*/
+
 #include <stdio.h>
 
 void PrimeiraParte( int n, int k, int N, int m, int a, int c, int r_0 );
@@ -36,12 +37,15 @@ void PrimeiraParte( int n, int k, int N, int m, int a, int c, int r_0 ) {
         fmax;
 
     for (int i = 0; i < N; i++) {
-            fmin = n;
-            fmax = 1;
+            fmin = n; /* maior dos k numeros sorteados */
+            fmax = 1; /* menor dos k numeros sorteados */
             for (int j = 0; j < k; j++) {
                 rn_1 = (a * rn + c) % m;
                 f_r = rn_1*n/m + 1;
 
+                /* Verificar se um dado numero simulado pela funcao mapeadora
+                   extrapola os limites inicialmente declarados para redefini-los até o fim da iteracao
+                */
                 if(f_r > fmax) {
                     fmax = f_r;
                 }
@@ -59,17 +63,26 @@ void PrimeiraParte( int n, int k, int N, int m, int a, int c, int r_0 ) {
 }
 
 void SegundaParte( int n, int d ) {
-    int ind_a, ind_b, ind_i, s_a, s_b, s_i, m, num_seq = 0;
+    int ind_a, /* Indice de Sa */
+        ind_b, /* Indice de Sb */
+        ind_i, /* Indice de Si */
+          s_a, /* Menor numero sorteado com o menor indice */
+          s_b, /* Maior numero sorteado com o menor indice */
+          s_i, /* Sa <= Si <= Sb | i != a && i != b */
+            m, /* Menor inteiro pertencente ao intervalo [1..n - d + 1] */
+         num_seq = 0; /* Contador do numero de sequencias */
 
-    printf("Listagem das sequencias de S( 4 , 3 , 2 ) (com repeticao):\n");
+    printf("Listagem das sequencias de S( %d , 3 , %d ) (com repeticao):\n", n, d);
 
     for (ind_a = 1; ind_a <= 3; ind_a++) {
         for (ind_b = 1; ind_b <= 3; ind_b++) {
             if (ind_a != ind_b) {
+                /* Escolha de m na ordem crescente */
                 for (m = 1; m <= n - d + 1; m++) {
                     s_a = m;
                     s_b = m + d - 1;
                     for (ind_i = 1; ind_i <= 3; ind_i++) {
+                        /* Os condicionais abaixo definem os intervalos de valores de s_i para cada (a,b) possivel */
                         if (ind_i > ind_a && ind_i > ind_b) {
                             for (s_i = m; s_i <= m + d - 1; s_i++) {
                                 Cospe(ind_a, ind_b, ind_i, s_a, s_b, s_i);
@@ -88,6 +101,12 @@ void SegundaParte( int n, int d ) {
                                 num_seq++;
                             }
                         }
+                        if (ind_i < ind_a && ind_i < ind_b) {
+                            for (s_i = m + 1; s_i <= m + d - 2; s_i++) {
+                                Cospe(ind_a, ind_b, ind_i, s_a, s_b, s_i);
+                                num_seq++;
+                            }
+                        }
                     }
                 }
             }
@@ -97,29 +116,27 @@ void SegundaParte( int n, int d ) {
     printf("Limites: %d e %d\n", 6*(d - 2)*(n - d + 1), 9*d*n);
 }
 
-void Cospe( int i, int j, int k, int s_i, int s_j, int s_k ) {
-    if ( i < j ) {
-        if ( j < k ) {
-            printf( "%d %d %d\n", s_i, s_j, s_k );
+/* Imprime os tres elementos segundo ordem crescente dos ındices*/
+void Cospe( int a, int b, int i, int s_a, int s_b, int s_i ) {
+    if (a < b) {
+        if (b < i) {
+            printf("%d %d %d\n", s_a, s_b, s_i);
+        }
+        else if (a < i) {
+            printf("%d %d %d\n", s_a, s_i, s_b);
         }
         else {
-            printf( "%d %d %d\n", s_i, s_k, s_j );
+            printf("%d %d %d\n", s_i, s_a, s_b);
         }
     }
-    else if (i < k) {
-        if ( j < k ) {
-            printf( "%d %d %d\n", s_j, s_i, s_k );
-        }
-        else {
-            printf( "%d %d %d\n", s_k, s_i, s_j );
-        }
+    else if (a < i) {
+        printf("%d %d %d\n", s_b, s_a, s_i);
+    }
+    else if (b < i) {
+        printf("%d %d %d\n", s_b, s_i, s_a);
     }
     else {
-        if ( j < k ) {
-            printf( "%d %d %d\n", s_j, s_k, s_i );
-        }
-        else {
-            printf( "%d %d %d\n", s_k, s_j, s_i );
-        }
+        printf("%d %d %d\n", s_i, s_b, s_a);
     }
 }
+
