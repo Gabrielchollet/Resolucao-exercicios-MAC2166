@@ -26,20 +26,21 @@ int main() {
 }
 
 void PrimeiraParte( int n, int k, int N, int m, int a, int c, int r_0 ) {
-    printf("Recorrencia   r <-- ( r x %d + %d ) mod %d   a partir da semente %d.\n", a, c, m, r_0);
-    printf("As %d sequencias de %d sorteios (com repeticao) em [ 1 .. %d ] e seus diametros:\n", N, k, n);
-
     int rn = r_0, /* termo n da recorrencia linear */
         rn_1,     /* termo n + 1 da recorrencia linear */
         f_r,      /* valor da funcao mapeadora */
         diam,     /* diametro dos sorteados */
         fmin,
-        fmax;
+        fmax,
+        i, j;     /* contadores dos loops */
 
-    for (int i = 0; i < N; i++) {
+    printf("Recorrencia   r <-- ( r x %d + %d ) mod %d   a partir da semente %d.\n", a, c, m, r_0);
+    printf("As %d sequencias de %d sorteios (com repeticao) em [ 1 .. %d ] e seus diametros:\n", N, k, n);
+
+    for (i = 0; i < N; i++) {
             fmin = n; /* maior dos k numeros sorteados */
             fmax = 1; /* menor dos k numeros sorteados */
-            for (int j = 0; j < k; j++) {
+            for (j = 0; j < k; j++) {
                 rn_1 = (a * rn + c) % m;
                 f_r = rn_1*n/m + 1;
 
@@ -56,9 +57,9 @@ void PrimeiraParte( int n, int k, int N, int m, int a, int c, int r_0 ) {
 
                 rn = rn_1;
 
-                printf("%5d", f_r);
+                printf("%5d ", f_r);
             }
-            printf("   -> %5d\n", diam);
+            printf("  -> %5d\n", diam);
     }
 }
 
@@ -81,30 +82,36 @@ void SegundaParte( int n, int d ) {
                 for (m = 1; m <= n - d + 1; m++) {
                     s_a = m;
                     s_b = m + d - 1;
-                    for (ind_i = 1; ind_i <= 3; ind_i++) {
-                        /* Os condicionais abaixo definem os intervalos de valores de s_i para cada (a,b) possivel */
-                        if (ind_i > ind_a && ind_i > ind_b) {
-                            for (s_i = m; s_i <= m + d - 1; s_i++) {
-                                Cospe(ind_a, ind_b, ind_i, s_a, s_b, s_i);
-                                num_seq++;
+                    /*
+                        Essas condicoes invalidam a repeticao de sequencias quando d = 1
+                        pois nesse caso S(n, k, 1, 1, 2) = S(n, k, 1, 2, 1)
+                    */
+                    if (s_b > s_a || ind_b > ind_a) {
+                        for (ind_i = 1; ind_i <= 3; ind_i++) {
+                            /* Os condicionais abaixo definem os intervalos de valores de s_i para cada (a,b) possivel */
+                            if (ind_i > ind_a && ind_i > ind_b) {
+                                for (s_i = m; s_i <= m + d - 1; s_i++) {
+                                    Cospe(ind_a, ind_b, ind_i, s_a, s_b, s_i);
+                                    num_seq++;
+                                }
                             }
-                        }
-                        if (ind_i > ind_a && ind_i < ind_b) {
-                            for (s_i = m; s_i <= m + d - 2; s_i++) {
-                                Cospe(ind_a, ind_b, ind_i, s_a, s_b, s_i);
-                                num_seq++;
+                            if (ind_i > ind_a && ind_i < ind_b) {
+                                for (s_i = m; s_i <= m + d - 2; s_i++) {
+                                    Cospe(ind_a, ind_b, ind_i, s_a, s_b, s_i);
+                                    num_seq++;
+                                }
                             }
-                        }
-                        if (ind_i < ind_a && ind_i > ind_b) {
-                            for (s_i = m + 1; s_i <= m + d - 1; s_i++) {
-                                Cospe(ind_a, ind_b, ind_i, s_a, s_b, s_i);
-                                num_seq++;
+                            if (ind_i < ind_a && ind_i > ind_b) {
+                                for (s_i = m + 1; s_i <= m + d - 1; s_i++) {
+                                    Cospe(ind_a, ind_b, ind_i, s_a, s_b, s_i);
+                                    num_seq++;
+                                }
                             }
-                        }
-                        if (ind_i < ind_a && ind_i < ind_b) {
-                            for (s_i = m + 1; s_i <= m + d - 2; s_i++) {
-                                Cospe(ind_a, ind_b, ind_i, s_a, s_b, s_i);
-                                num_seq++;
+                            if (ind_i < ind_a && ind_i < ind_b) {
+                                for (s_i = m + 1; s_i <= m + d - 2; s_i++) {
+                                    Cospe(ind_a, ind_b, ind_i, s_a, s_b, s_i);
+                                    num_seq++;
+                                }
                             }
                         }
                     }
@@ -113,10 +120,14 @@ void SegundaParte( int n, int d ) {
         }
     }
     printf("Total de %d sequencias\n", num_seq);
-    printf("Limites: %d e %d\n", 6*(d - 2)*(n - d + 1), 9*d*n);
+    if (d > 1) {
+        printf("Limites: %d e %d\n", 6*(d - 2)*(n - d + 1), 9*d*n);
+    }
 }
 
-/* Imprime os tres elementos segundo ordem crescente dos ındices*/
+/*
+    Funcao que imprime os tres elementos segundo ordem crescente dos ındices segundo uma "arvore de decisao" para o numero de k sorteios igual a 3
+*/
 void Cospe( int a, int b, int i, int s_a, int s_b, int s_i ) {
     if (a < b) {
         if (b < i) {
@@ -138,5 +149,6 @@ void Cospe( int a, int b, int i, int s_a, int s_b, int s_i ) {
     else {
         printf("%d %d %d\n", s_i, s_b, s_a);
     }
+    return;
 }
 
