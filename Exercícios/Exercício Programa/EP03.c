@@ -79,7 +79,8 @@ int criaNumerao(int n, int num[])
 
 void imprimeNumerao(int num[], int tamNum)
 {
-    if (num[0] == 0)
+    /* Para numeroes positivos */
+    if (num[0] == 1)
     {
         for (int i = tamNum; i > 0; i--)
         {
@@ -121,27 +122,40 @@ int soma(int a[], int tamA, int b[], int tamB)
             }
             numDigitos++;
         }
+        return numDigitos;
     }
-    /* Para os casos de a >= 0 e b < 0, a < 0 e b >= 0 */
-    if ((a[0] == 1 && b[0] == -1) && (a[0] == -1 && b[0] == 1))
+    /* Para os casos de a >= 0 e b < 0 */
+    if (a[0] == 1 && b[0] == -1)
     {
         for (int j = 1; j <= tamA || j <= tamB; j++)
         {
-            if (a[j] >= b[j])
+            if (a[j] < b[j])
+            {
+                a[j + 1]--;
+                a[j] += b[0]*b[j] + 10;
+            }
+            else
             {
                 a[j] += b[0]*b[j];
-                if (a[j] >= 10)
-                {
-                    a[j + 1] += a[j] / 10;
-                    a[j] %= 10;
-
-                    if (j >= tamA)
-                    {
-                        numDigitos++;
-                    }
-                }
             }
-
+            numDigitos++;
+        }
+        return numDigitos;
+    }
+    /* Para a < 0 e b >= 0 */
+    if (a[0] == -1 && b[0] == 1)
+    {
+        for (int k = 1; k <= tamA || k <= tamB; k++)
+        {
+            if (a[k] > b[k])
+            {
+                b[k + 1]--;
+                a[k] = a[0]*a[k] + b[0]*b[k] + 10;
+            }
+            else
+            {
+                a[k] = a[0]*a[k] + b[0]*b[k];
+            }
             numDigitos++;
         }
     }
