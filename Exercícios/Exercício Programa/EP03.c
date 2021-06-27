@@ -6,7 +6,7 @@
 */
 
 #include <stdio.h>
-#define TAM_MAX 2021
+#define TAM_MAX 10
 
 /* Função que recebe um inteiro n e o armazena em num,
 retornando a quantidade de dígitos: */
@@ -14,7 +14,7 @@ int criaNumerao(int n, int num[]);
 
 
 /* Função que recebe um numerão com tamNum dígitos e o imprime: */
-void imprimeNumerao(int num[], int tamNum);
+void imprimeNumerao(int a, int b, int num[], int tamNum);
 
 /* Soma ’a’ e ’b’ e guarda o resultado (a+b) em ’a’
 ’b’ não é modificado
@@ -23,6 +23,8 @@ int soma(int a[], int tamA, int b[], int tamB);
 
 /* Vetores que guardaram os algarismos do numerao 'a' e do numerao 'b' */
 int num_a[TAM_MAX], num_b[TAM_MAX];
+
+int sinal(int a[], int tamA, int b[], int tamB);
 
 int main()
 {
@@ -42,7 +44,7 @@ int main()
         /*TODO: soma*/
         tamNum_soma = soma(num_a, tamNum_a, num_b, tamNum_b);
         /*TODO: imprime o numerao A*/
-        imprimeNumerao(num_a, tamNum_soma);
+        imprimeNumerao(a, b, num_a, tamNum_soma);
     }
     else
     {
@@ -77,9 +79,17 @@ int criaNumerao(int n, int num[])
     return numDigitos;
 }
 
-void imprimeNumerao(int num[], int tamNum)
+void imprimeNumerao(int a, int b, int num[], int tamNum)
 {
     /* Para numeroes positivos */
+    if (a * -1 <= b)
+    {
+        num_a[0] = 1;
+    }
+    else if (b * -1 >= a)
+    {
+        num_a[0] = -1;
+    }
     if (num[0] == 1)
     {
         for (int i = tamNum; i > 0; i--)
@@ -124,40 +134,12 @@ int soma(int a[], int tamA, int b[], int tamB)
         }
         return numDigitos;
     }
-    /* Para os casos de a >= 0 e b < 0 */
-    if (a[0] == 1 && b[0] == -1)
+    /* Para os casos de a >= 0 e b < 0
+    for (int j = 1; j <= tamA || j <= tamB; j++)
     {
-        for (int j = 1; j <= tamA || j <= tamB; j++)
-        {
-            if (a[j] < b[j])
-            {
-                a[j + 1]--;
-                a[j] += b[0]*b[j] + 10;
-            }
-            else
-            {
-                a[j] += b[0]*b[j];
-            }
-            numDigitos++;
-        }
-        return numDigitos;
-    }
+        a[0] = sinal(a, tamNum_a, b, tamNum_b);
+    }*/
     /* Para a < 0 e b >= 0 */
-    if (a[0] == -1 && b[0] == 1)
-    {
-        for (int k = 1; k <= tamA || k <= tamB; k++)
-        {
-            if (a[k] > b[k])
-            {
-                b[k + 1]--;
-                a[k] = a[0]*a[k] + b[0]*b[k] + 10;
-            }
-            else
-            {
-                a[k] = a[0]*a[k] + b[0]*b[k];
-            }
-            numDigitos++;
-        }
-    }
+
     return numDigitos;
 }
