@@ -6,7 +6,7 @@
 */
 
 #include <stdio.h>
-#define TAM_MAX 10
+#define TAM_MAX 100
 
 /* Função que recebe um inteiro n e o armazena em num,
 retornando a quantidade de dígitos: */
@@ -24,30 +24,44 @@ int soma(int a[], int tamA, int b[], int tamB);
 /* Vetores que guardaram os algarismos do numerao 'a' e do numerao 'b' */
 int num_a[TAM_MAX], num_b[TAM_MAX];
 
+/* Soma a soma dos n primeiros inteiros naturais */
+int soma_de_n(int a);
+
 int main()
 {
     int escolha, a, b, tamNum_a, tamNum_b, tamNum_soma;
     printf("Digite 0 (soma) ou 1 (soma naturais): ");
     scanf("%d", &escolha);
+    printf("\n");
     if (escolha == 0)
     {
         /* Ler 'a' e 'b' */
         printf("Digite o primeiro numero: ");
         scanf("%d", &a);
+        printf("\n");
         printf("Digite o segundo numero: ");
         scanf("%d", &b);
-        /* Criar numerao A e numerao B*/
+        printf("\n");
+        /* Criar numerao A e numerao B */
         tamNum_a = criaNumerao(a, num_a);
         tamNum_b = criaNumerao(b, num_b);
-        /*TODO: soma*/
+        /* TODO: soma */
         tamNum_soma = soma(num_a, tamNum_a, num_b, tamNum_b);
-        /*TODO: imprime o numerao A*/
+        /* TODO: imprime o numerao A */
+        printf("Soma: ");
         imprimeNumerao(a, b, num_a, tamNum_soma);
+        printf("\n");
     }
     else
     {
-        printf("Entre com valor de n para soma dos n primeiros naturais:");
+        printf("Entre com valor de n para soma dos n primeiros naturais: ");
         scanf("%d", &a);
+        printf("\n");
+        /* TODO: soma dos n naturais */
+        tamNum_soma = soma_de_n(a);
+        printf("Soma dos %d naturais = ", a);
+        imprimeNumerao(a, 0, num_a, tamNum_soma);
+        printf("\n");
     }
     return 0;
 }
@@ -80,18 +94,19 @@ int criaNumerao(int n, int num[])
 void imprimeNumerao(int a, int b, int num[], int tamNum)
 {
     int soma_esq = 0;
-    if (a > b)
+
+    if (a >= 0 && b < 0 && (a < (-1 * b)))
     {
-        num[0] = 1;
+        num[0] = -1;
+    }
+    else if (a < 0 && b >= 0 && ((-1 * a) < b))
+    {
+        num[0] = 0;
     }
     else if (a == b)
     {
         printf("0\n");
         return;
-    }
-    else
-    {
-        num[0] = -1;
     }
 
     if (num[0] == 1)
@@ -173,7 +188,6 @@ int soma(int a[], int tamA, int b[], int tamB)
                     numDigitos++;
                 }
             }
-            /*TODO: caso tamA < tamB*/
             else
             {
 
@@ -190,5 +204,20 @@ int soma(int a[], int tamA, int b[], int tamB)
         }
     }*/
 
+    return numDigitos;
+}
+
+int soma_de_n(int a)
+{
+    /*
+        S = 1 + 2 + 3 + ... + n = 1/2 * ((1+2) + (2+3) + ... (n-1 + n)) + (n+1)
+    */
+    int numDigitos = 0, tamNum_a, tamNum_b;
+    for (int i = 1; i < a; i++)
+    {
+        tamNum_a = criaNumerao(i, num_a);
+        tamNum_b = criaNumerao(i + 1, num_b);
+        numDigitos = soma(num_a, tamNum_a, num_b, tamNum_b);
+    }
     return numDigitos;
 }
