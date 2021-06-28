@@ -6,7 +6,7 @@
 */
 
 #include <stdio.h>
-#define TAM_MAX 100
+#define TAM_MAX 2021
 
 /* Função que recebe um inteiro n e o armazena em num,
 retornando a quantidade de dígitos: */
@@ -25,7 +25,7 @@ int soma(int a[], int tamA, int b[], int tamB);
 int num_a[TAM_MAX], num_b[TAM_MAX];
 
 /* Soma a soma dos n primeiros inteiros naturais */
-int soma_de_n(int a);
+int soma_de_n(int n, int num_tot[], int num_i[]);
 
 int main()
 {
@@ -45,9 +45,9 @@ int main()
         /* Criar numerao A e numerao B */
         tamNum_a = criaNumerao(a, num_a);
         tamNum_b = criaNumerao(b, num_b);
-        /* TODO: soma */
+        /* Soma */
         tamNum_soma = soma(num_a, tamNum_a, num_b, tamNum_b);
-        /* TODO: imprime o numerao A */
+        /* Imprime o numerao A */
         printf("Soma: ");
         imprimeNumerao(a, b, num_a, tamNum_soma);
         printf("\n");
@@ -57,9 +57,9 @@ int main()
         printf("Entre com valor de n para soma dos n primeiros naturais: ");
         scanf("%d", &a);
         printf("\n");
-        /* TODO: soma dos n naturais */
-        tamNum_soma = soma_de_n(a);
-        printf("Soma dos %d naturais = ", a);
+        /* Soma dos n naturais */
+        tamNum_soma = soma_de_n(a, num_a, num_b);
+        printf("Soma dos %d primeiros naturais = ", a);
         imprimeNumerao(a, 0, num_a, tamNum_soma);
         printf("\n");
     }
@@ -93,6 +93,7 @@ int criaNumerao(int n, int num[])
 
 void imprimeNumerao(int a, int b, int num[], int tamNum)
 {
+    /* Verificar o sinal do resultado das somas */
     int soma_esq = 0;
 
     if (a >= 0 && b < 0 && (a < (-1 * b)))
@@ -101,14 +102,15 @@ void imprimeNumerao(int a, int b, int num[], int tamNum)
     }
     else if (a < 0 && b >= 0 && ((-1 * a) < b))
     {
-        num[0] = 0;
+        num[0] = 1;
     }
-    else if (a == b)
+    else if (a == (-1 * b))
     {
         printf("0\n");
         return;
     }
 
+    /* IMprimir o numero obtido */
     if (num[0] == 1)
     {
         for (int i = tamNum; i > 0; i--)
@@ -139,7 +141,7 @@ void imprimeNumerao(int a, int b, int num[], int tamNum)
 int soma(int a[], int tamA, int b[], int tamB)
 {
     int numDigitos = 0;
-    /*TODO: soma 'a' e 'b' */
+    /* Somar 'a' e 'b' */
     /* Otimizacao: pensar numa forma de não usar if's para determinar o tipo de soma entre 'a' e 'b' */
     /* Para os casos de a >= 0 e b >= 0, e a < 0 e b < 0 */
     if ((a[0] == 1 && b[0] == 1) || (a[0] == -1 && b[0] == -1))
@@ -180,17 +182,15 @@ int soma(int a[], int tamA, int b[], int tamB)
                 }
                 numDigitos++;
             }
-            else if (tamA == tamB)
+            else if (tamA == tamB && (a[tamA] < b[tamB]))
             {
-                if (a[tamA] < b[tamB])
+                a[j] = b[j] - a[j];
+                if (a[j] < 0)
                 {
-                    a[j] = b[j] - a[j];
-                    numDigitos++;
+                    b[j + 1]--;
+                    a[j] += 10;
                 }
-            }
-            else
-            {
-
+                numDigitos++;
             }
         }
         return numDigitos;
@@ -207,17 +207,23 @@ int soma(int a[], int tamA, int b[], int tamB)
     return numDigitos;
 }
 
-int soma_de_n(int a)
+int soma_de_n(int n, int num_tot[], int num_i[])
 {
     /*
         S = 1 + 2 + 3 + ... + n = 1/2 * ((1+2) + (2+3) + ... (n-1 + n)) + (n+1)
     */
-    int numDigitos = 0, tamNum_a, tamNum_b;
-    for (int i = 1; i < a; i++)
+    int numDigitos = 0, tam_i, tam_tot;
+    tam_tot = criaNumerao(1, num_tot);
+    for (int i = 2; i <= n; i++)
     {
+        tam_i = criaNumerao(i, num_i);
+        numDigitos = soma(num_tot, tam_tot, num_i, tam_i);
+
+        /*
         tamNum_a = criaNumerao(i, num_a);
         tamNum_b = criaNumerao(i + 1, num_b);
         numDigitos = soma(num_a, tamNum_a, num_b, tamNum_b);
+        */
     }
     return numDigitos;
 }
