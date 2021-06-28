@@ -24,8 +24,6 @@ int soma(int a[], int tamA, int b[], int tamB);
 /* Vetores que guardaram os algarismos do numerao 'a' e do numerao 'b' */
 int num_a[TAM_MAX], num_b[TAM_MAX];
 
-int sinal(int a[], int tamA, int b[], int tamB);
-
 int main()
 {
     int escolha, a, b, tamNum_a, tamNum_b, tamNum_soma;
@@ -81,20 +79,30 @@ int criaNumerao(int n, int num[])
 
 void imprimeNumerao(int a, int b, int num[], int tamNum)
 {
-    /* Para numeroes positivos */
-    if (a * -1 <= b)
+    int soma_esq = 0;
+    if (a > b)
     {
-        num_a[0] = 1;
+        num[0] = 1;
     }
-    else if (b * -1 >= a)
+    else if (a == b)
     {
-        num_a[0] = -1;
+        printf("0\n");
+        return;
     }
+    else
+    {
+        num[0] = -1;
+    }
+
     if (num[0] == 1)
     {
         for (int i = tamNum; i > 0; i--)
         {
-            printf("%d", num[i]);
+            soma_esq += num[i];
+            if (soma_esq != 0)
+            {
+                printf("%d", num[i]);
+            }
         }
     }
     else
@@ -102,7 +110,11 @@ void imprimeNumerao(int a, int b, int num[], int tamNum)
         printf("-");
         for (int i = tamNum; i > 0; i--)
         {
-            printf("%d", num[i]);
+            soma_esq += num[i];
+            if (soma_esq != 0)
+            {
+                printf("%d", num[i]);
+            }
         }
     }
     printf("\n");
@@ -134,12 +146,49 @@ int soma(int a[], int tamA, int b[], int tamB)
         }
         return numDigitos;
     }
-    /* Para os casos de a >= 0 e b < 0
-    for (int j = 1; j <= tamA || j <= tamB; j++)
+    /* Para os casos de a >= 0 e b < 0 */
+    if ((a[0] == 1 && b[0] == -1) || (a[0] == -1 && b[0] == 1))
     {
-        a[0] = sinal(a, tamNum_a, b, tamNum_b);
+        for (int j = 1; j <= tamA || j <= tamB; j++)
+        {
+            if (tamA > tamB || (tamA == tamB && a[tamA] > b[tamB]))
+            {
+                a[j] += (-1)*b[j];
+                if (a[j] < 0)
+                {
+                    a[j] += 10;
+                    a[j + 1]--;
+                    if (j == tamA && a[j + 1] == 1)
+                    {
+                        numDigitos--;
+                    }
+                }
+                numDigitos++;
+            }
+            else if (tamA == tamB)
+            {
+                if (a[tamA] < b[tamB])
+                {
+                    a[j] = b[j] - a[j];
+                    numDigitos++;
+                }
+            }
+            /*TODO: caso tamA < tamB*/
+            else
+            {
+
+            }
+        }
+        return numDigitos;
+    }
+    /* Para a < 0 e b >= 0
+    if (a[0] == -1 && b[0] == 1)
+    {
+        for (int k = 0; k <= tamA || k <= tamB; k++)
+        {
+
+        }
     }*/
-    /* Para a < 0 e b >= 0 */
 
     return numDigitos;
 }
