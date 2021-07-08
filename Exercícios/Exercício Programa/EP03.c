@@ -218,6 +218,7 @@ int soma_de_n(int n, int num_tot[], int num_i[])
     {
         tam_i = criaNumerao(i, num_i);
         numDigitos = soma(num_tot, tam_tot, num_i, tam_i);
+        tam_tot = numDigitos;
 
         /*
         tamNum_a = criaNumerao(i, num_a);
