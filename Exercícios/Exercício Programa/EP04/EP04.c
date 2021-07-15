@@ -198,13 +198,82 @@ int main() {
 
 int BuscaMarcador( int ini, char politech[MAXP], char marcador[MAXM] )
 {
-    for (int i = 0; i < MAXP; i++)
+    for (; ini < MAXP; ini++)
     {
-
+        /* Marcador ATG */
+        if (politech[ini] == 'A')
+        {
+            ini++;
+            if (politech[ini] == 'T')
+            {
+                ini++;
+                if (politech[ini] == 'G')
+                {   ini -= 2;
+                    return ini;
+                }
+                else
+                {
+                    ini -= 2;
+                }
+            }
+            else
+            {
+                ini--;
+            }
+        }
+        /* Marcador TAA ou TGA ou TAG */
+        else if (politech[ini] == 'T')
+        {
+            ini++;
+            if (politech[ini] == 'A')
+            {
+                ini++;
+                if (politech[ini] == 'A')
+                {   ini -= 2;
+                    return ini;
+                }
+                else
+                {
+                    ini -= 2;
+                }
+            }
+            else if (politech[ini] == 'G')
+            {
+                ini++;
+                if (politech[ini] == 'A')
+                {
+                    ini -= 2;
+                    return ini;
+                }
+                else
+                {
+                    ini -= 2;
+                }
+            }
+            else if (politech[ini] == 'A')
+            {
+                ini++;
+                if (politech[ini] == 'G')
+                {
+                    ini -= 2;
+                    return ini;
+                }
+                else
+                {
+                    ini -= 2;
+                }
+            }
+            else
+            {
+                ini--;
+            }
+        }
     }
-    return;
+    return MAXP;
 }
 
+int BuscaMarcadores( int ini, char politech[MAXP], int k, char marcadores[MAXK][MAXM], int *compr);
+{
 
-
-
+    return;
+}
