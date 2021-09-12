@@ -1,3 +1,23 @@
+/*
+  AO PREENCHER ESSE CABEÇALHO COM O MEU NOME E O MEU NÚMERO USP,
+  DECLARO QUE SOU O ÚNICO AUTOR E RESPONSÁVEL POR ESSE PROGRAMA.
+  TODAS AS PARTES ORIGINAIS DESSE EXERCÍCIO PROGRAMA (EP) FORAM
+  DESENVOLVIDAS E IMPLEMENTADAS POR MIM SEGUINDO AS INSTRUÇÕES
+  DESSE EP E QUE PORTANTO NÃO CONSTITUEM DESONESTIDADE ACADÊMICA
+  OU PLÁGIO.
+  DECLARO TAMBÉM QUE SOU RESPONSÁVEL POR TODAS AS CÓPIAS
+  DESSE PROGRAMA E QUE EU NÃO DISTRIBUI OU FACILITEI A
+  SUA DISTRIBUIÇÃO. ESTOU CIENTE QUE OS CASOS DE PLÁGIO E
+  DESONESTIDADE ACADÊMICA SERÃO TRATADOS SEGUNDO OS CRITÉRIOS
+  DIVULGADOS NA PÁGINA DA DISCIPLINA.
+  ENTENDO QUE EPS SEM ASSINATURA NÃO SERÃO CORRIGIDOS E,
+  AINDA ASSIM, PODERÃO SER PUNIDOS POR DESONESTIDADE ACADÊMICA.
+
+  Nome : Gabriel Gomes de Araujo Chollet
+  NUSP : 12550685
+  Turma: 01
+  Prof.: Alair Pereira do Lago
+*/
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -22,20 +42,21 @@ int BuscaMarcadores( int ini, char politech[MAXP],
 		     int k, char marcadores[MAXK][MAXM], int *compr);
 int Delta( char q[MAXP], char p[MAXP], int delta[MAXD], int desloc, int ini, int fim );
 int DiferencaDeConjuntos( int delta_q[MAXD], int delta_s[MAXD], int q_menos_s[MAXD] );
-int HaIncompatibilidade( int n, char F[MAXF][MAXP], int j_p,
-			  int G[MAXF], int D[MAXF][MAXD] );
+int HaIncompatibilidade( int n, char F[MAXF][MAXP], int j_p, int G[MAXF], int D[MAXF][MAXD] );
 
 /*
 Você deve escrever o protótipo da função abaixo
  */
-void DiametroEProbabilidades( /* preencha esse espaco */  );
+void DiametroEProbabilidades(int delta[MAXD], int ini, int fim, int *diametro, double *Prob_eq_diametro, double *Prob_le_diametro);
 
-
+/*Fatorial de inteiros não-negativos*/
+long double Fat(int n);
 
 /*
 Você pode escrever outras funções para lhe ajudar.
 Por exemplo, uma função para calcular |T(n,k,d)| pode ser útil
 */
+
 
 
 
@@ -196,84 +217,189 @@ int main() {
   return 0;
 }
 
+
 int BuscaMarcador( int ini, char politech[MAXP], char marcador[MAXM] )
 {
-    for (; ini < MAXP; ini++)
+    for (int j = 0; ini < strlen(politech); ini++)
     {
-        /* Marcador ATG */
-        if (politech[ini] == 'A')
+        if (marcador[j] == politech[ini])
         {
-            ini++;
-            if (politech[ini] == 'T')
-            {
-                ini++;
-                if (politech[ini] == 'G')
-                {   ini -= 2;
-                    return ini;
-                }
-                else
-                {
-                    ini -= 2;
-                }
-            }
-            else
-            {
-                ini--;
-            }
+            j++;
         }
-        /* Marcador TAA ou TGA ou TAG */
-        else if (politech[ini] == 'T')
+        else
         {
-            ini++;
-            if (politech[ini] == 'A')
-            {
-                ini++;
-                if (politech[ini] == 'A')
-                {   ini -= 2;
-                    return ini;
-                }
-                else
-                {
-                    ini -= 2;
-                }
-            }
-            else if (politech[ini] == 'G')
-            {
-                ini++;
-                if (politech[ini] == 'A')
-                {
-                    ini -= 2;
-                    return ini;
-                }
-                else
-                {
-                    ini -= 2;
-                }
-            }
-            else if (politech[ini] == 'A')
-            {
-                ini++;
-                if (politech[ini] == 'G')
-                {
-                    ini -= 2;
-                    return ini;
-                }
-                else
-                {
-                    ini -= 2;
-                }
-            }
-            else
-            {
-                ini--;
-            }
+            j = 0;
+        }
+        if (marcador[j] == '\0' && marcador[0] != '\0')
+        {
+            return ini - j + 1;
         }
     }
     return MAXP;
 }
 
-int BuscaMarcadores( int ini, char politech[MAXP], int k, char marcadores[MAXK][MAXM], int *compr);
+int BuscaMarcadores( int ini, char politech[MAXP], int k, char marcadores[MAXK][MAXM], int *compr)
 {
+    int pos[MAXK];
+    int first_marker;
+
+    /*encrontrar a primeira ocorrencia de qualquer um dos k marcadores e
+      encontra o comprimento do primeiro marcador encontrado*/
+    for (int i = 0; i <= k; i++)
+    {
+        pos[i] = BuscaMarcador(ini, politech, marcadores[i]);
+    }
+
+    first_marker = pos[0];
+    for (int z = 0; z < k - 1; z++)
+    {
+        if (pos[z] > pos[z + 1])
+        {
+            first_marker = pos[z + 1];
+            if (first_marker != MAXP)
+            {
+                *compr = strlen(marcadores[z + 1]);
+            }
+            else
+            {
+                compr = 0;
+            }
+        }
+    }
+
+    return first_marker;
+}
+
+int Delta( char q[MAXP], char p[MAXP], int delta[MAXD], int desloc, int ini, int fim )
+{
+    int z = 0; /*numero de diferencas*/
+    for (int i = 0; i + ini <= fim; i++)
+    {
+        if (p[i + ini] != q[i + ini + desloc])
+        {
+            delta[z] = i + ini;
+            z++;
+        }
+    }
+
+    delta[z] = MAXP;
+
+    return z;
+}
+
+long double Fat(int n)
+{
+    if (n == 1)
+    {
+        return 1;
+    }
+    else
+    {
+        return n*Fat(n - 1);
+    }
+    /*
+    double fatorial = 1;
+
+    for (int i = n; i > 0; i--) {
+        fatorial *= i;
+    }
+
+    return fatorial;
+    */
+}
+
+void DiametroEProbabilidades(int delta[MAXD], int ini, int fim, int *diametro, double *Prob_eq_diametro, double *Prob_le_diametro)
+{
+    int i = 0, k = 0, n = fim - ini + 1, prob_menor = 0;
+
+    while (delta[k] != MAXP && delta[k] >= ini && delta[k] <= fim)
+    {
+        k++;
+    }
+
+    *diametro = 1 + delta[k] - delta[0];
+
+    /*probabilidade para conjuntos com mesmo diametro*/
+    if (*diametro == k && *diametro == 1)
+    {
+        *Prob_eq_diametro = 1;
+        *Prob_le_diametro = 0;
+    }
+    else if (n >= *diametro && *diametro >= k && k >= 2)
+    {
+        *Prob_eq_diametro = (Fat(n - k) / Fat(n))*(n - *diametro + 1)*k*(k - 1)*Fat(*diametro - 2)/Fat(*diametro - k);
+        /*probabilidade para conjuntos com diâmetros não superiores*/
+        for (i = *diametro; i >= k; i--)
+        {
+            prob_menor += (Fat(n - k) / Fat(n))*(n - i + 1)*k*(k - 1)*Fat(i - 2)/Fat(i - k);
+        }
+        *Prob_le_diametro = prob_menor + *Prob_eq_diametro;
+    }
 
     return;
+}
+
+int DiferencaDeConjuntos( int delta_q[MAXD], int delta_s[MAXD], int q_menos_s[MAXD] )
+{
+    int len_q = 0, len_s = 0, k = 0,
+     ret = 0; /*numero de elementos comuns a delta_q e delta_s*/
+    while (delta_q[len_q] != MAXP)
+    {
+        len_q++;
+    }
+    while (delta_s[len_s] != MAXP)
+    {
+        len_s++;
+    }
+    for (int i = 0, a = 0; delta_q[i] != MAXP; i++)
+    {
+
+        k = 0;
+
+        for (int j = 0; delta_s[j] != MAXP; j++)
+        {
+            if (delta_q[i] != delta_s[j])
+            {
+                k++;
+            }
+        }
+        if (k == len_s)
+        {
+            q_menos_s[a] = delta_q[i];
+            a++;
+        }
+        else
+        {
+            ret++;
+        }
+    }
+    q_menos_s[len_q - ret] = MAXP;
+
+    return len_q - ret;
+}
+
+
+int HaIncompatibilidade( int n, char F[MAXF][MAXP], int j_p, int G[MAXF], int D[MAXF][MAXD] )
+{
+    int len_q_s, len_s_q, q_menos_s[MAXD], s_menos_q[MAXD], c, d;
+    char q[MAXP], s[MAXP], r[MAXP];
+
+    for (int i = 0; i < n && i != j_p; i++)
+    {
+        for (int j = 0; j < n && j != i && j != j_p; j++)
+        {
+            len_q_s = DiferencaDeConjuntos(D[i], D[j], q_menos_s);
+            len_s_q = DiferencaDeConjuntos(D[j], D[i], s_menos_q);
+
+            for (int k = 0; k < n && k != j_p; k++)
+            {
+                if (D[i] == q_menos_s && D[j] == s_menos_q && D[i] == D[k] && D[j] == D[k] )
+                {
+                    //printf("  contraexemplo: q = %d    s = %d    c = %d     d = %d     r = %d", i, j, );
+                }
+            }
+        }
+    }
+
+    return FALSE;
 }
